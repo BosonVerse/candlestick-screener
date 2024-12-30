@@ -2,7 +2,8 @@ import os, csv
 import talib
 import yfinance as yf
 import pandas
-from flask import Flask, escape, request, render_template
+from markupsafe import escape
+from flask import Flask, request, render_template
 from patterns import candlestick_patterns
 
 app = Flask(__name__)
@@ -32,6 +33,7 @@ def index():
 
     if pattern:
         for filename in os.listdir('datasets/daily'):
+            print(f'filename : {filename}')
             df = pandas.read_csv('datasets/daily/{}'.format(filename))
             pattern_function = getattr(talib, pattern)
             symbol = filename.split('.')[0]
@@ -50,3 +52,11 @@ def index():
                 print('failed on filename: ', filename)
 
     return render_template('index.html', candlestick_patterns=candlestick_patterns, stocks=stocks, pattern=pattern)
+
+@app.route('/')
+def health():
+    return render_template('health.html', message=request)
+
+if __name__ == '__main__':
+    app.run(debug=True)
+    # index()
