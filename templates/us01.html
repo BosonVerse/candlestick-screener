@@ -1,0 +1,76 @@
+<html>
+<head>
+    <style>
+        body { font-family: arial; margin: 20px; }
+        table {border-collapse: collapse;}
+        th, td { padding: 5px; border: 1px solid black;}
+        .bullish { background: green; color: white; }
+        .bearish { background: red; color: white; }
+        .symbl-width {width: 400px;}
+        .chart-width {width: 3200px;}
+    </style>
+</head>
+<body>
+    <h1>Technical Scanner</h1>
+    <form>
+        <div>
+        <select name="pattern">
+            <option value="">-- Select a Pattern --</option>
+            {% for key in symb_chrt_dict %}
+                <option value="{{ key }}" {% if pattern == key %}selected="selected"{% endif %}>{{ symb_chrt_dict[key] }}</option>
+            {% endfor %}
+        </select>
+
+            <input type="submit" value="Scan" />
+        </div>
+    </form>
+<!--        <div>-->
+<!--        <select name="pattern1">-->
+<!--            <option value="">&#45;&#45; Select a Pattern &#45;&#45;</option>-->
+<!--            {% for key in stocks %}-->
+<!--                <option value="{{ key }}" {% if pattern == key %}selected="selected"{% endif %}>{{ stocks[key] }}</option>-->
+<!--            {% endfor %}-->
+<!--        </select>-->
+
+<!--        <input type="submit" value="Scan" />-->
+<!--        </div>-->
+<!--    </form>-->
+
+    <table>
+        <colgroup>
+            <col class="symbl-width">
+            <col class="chart-width">
+        </colgroup>
+        <tr>
+            <th>symbol</th>
+            <th>chart</th>
+        </tr>
+        {% for k,v in symb_chrt_dict.items() %}
+            <tr>
+                <td>{{ v[0] }}</td>
+                <td><img src="data:image/png;base64,{{v[1]}}" /></td>
+            </tr>
+        {% endfor %}
+
+<!--        {% for stock in stocks %}-->
+<!--            {% if stocks[stock][pattern] %}-->
+<!--            <tr>-->
+<!--                <td>-->
+<!--                    {{ stock }}-->
+<!--                </td>-->
+<!--                <td>-->
+<!--                    {{ stocks[stock]['company'] }}-->
+<!--                </td>-->
+<!--                <td class="{{ stocks[stock][pattern] }}">-->
+<!--                    {{ stocks[stock][pattern]}}-->
+<!--                </td>-->
+<!--            <tr>-->
+<!--                <td colspan="3">-->
+<!--                    <img src="https://finviz.com/chart.ashx?t={{ stock }}&ty=c&ta=1&p=d&s=l" />-->
+<!--                </td>-->
+<!--            </tr>-->
+<!--            {% endif %}-->
+<!--        {% endfor %}-->
+    </table>
+</body>
+</html>

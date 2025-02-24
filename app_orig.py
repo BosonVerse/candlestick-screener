@@ -1,26 +1,21 @@
 import os, csv
 import talib
-from yfinance import download
+import yfinance as yf
 import pandas
 from flask import Flask, request, render_template
 from patterns import candlestick_patterns
-import config as c
-
-dataset_symbols = f'{c.DATA_DIR}\symbolsNSE.csv'
-dataset_daily = f'{c.DATA_DIR}\dailyNSE'
 
 app = Flask(__name__)
 
 @app.route('/snapshot')
 def snapshot():
-    with open(dataset_symbols) as f:
+    with open('datasets/symbols.csv') as f:
         for line in f:
             if "," not in line:
                 continue
             symbol = line.split(",")[0]
-            data = download(symbol, start="2020-01-01", end="2020-08-01")
-            # data.to_csv(f'{dataset_daily}/{symbol}.csv'.format(dataset_daily, symbol))
-            #data.to_csv(f'{dataset_daily}/{symbol}.csv')
+            data = yf.download(symbol, start="2020-01-01", end="2020-08-01")
+            data.to_csv('datasets/daily/{}.csv'.format(symbol))
 
     return {
         "code": "success"
@@ -28,19 +23,19 @@ def snapshot():
 
 @app.route('/')
 def index():
-    # pattern  = request.args.get('pattern', False)
-    pattern = 'CDL3INSIDE' # Three Inside Up/Down
+
+    # use 'CDL3INSIDE' # Three Inside Up/Down to get charts
+    pattern  = request.args.get('pattern', False)
     stocks = {}
 
-    with open(dataset_symbols) as f:
+    with open('datasets/symbols.csv') as f:
         for row in csv.reader(f):
             stocks[row[0]] = {'company': row[1]}
 
     if pattern:
-        for filename in os.listdir(f'{dataset_daily}'):
+        for filename in os.listdir('datasets/daily'):
             print(f'filename : {filename}')
-            # df = pandas.read_csv(f'{dataset_daily}/{filename}'.format(filename))
-            df = pandas.read_csv(f'{dataset_daily}/{filename}')
+            df = pandas.read_csv('datasets/daily/{}'.format(filename))
             pattern_function = getattr(talib, pattern)
             symbol = filename.split('.')[0]
 
